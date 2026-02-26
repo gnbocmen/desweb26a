@@ -3,9 +3,6 @@ from psycopg.rows import dict_row
 from myLib.connect import connect
 from myLib.p1Settings import EPSG_CODE
 
-from myLib.connect import connect
-from myLib.p1Settings import EPSG_CODE
-
 
 class buildings_polig():
     def __init__(self):
@@ -28,12 +25,14 @@ class buildings_polig():
             'Región Huánuco', 'Huánuco', 'Huánuco', 854234, 
             poligono, EPSG_CODE
         ])
+        self.conn.commit()
+        l=self.cur.fetchall()
         print(l)
         print(l[0][0])
         self.disconnect()
         print("Inserted")
 
-    def select(self, asDict=True):
+    def select(self, asDict=False):
         if asDict:
             self.cur = self.conn.cursor(row_factory=dict_row)
         
@@ -60,7 +59,7 @@ class buildings_polig():
             WHERE
                 id=%s
             """
-        valuesList=[3]
+        valuesList=[4]
         self.cur.execute(cons, valuesList)
         print(self.cur.rowcount)
         self.conn.commit()

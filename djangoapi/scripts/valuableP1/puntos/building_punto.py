@@ -32,7 +32,7 @@ class buildings_point():
         self.disconnect()
         print("Inserted")
 
-    def select(self, asDict=True):
+    def select(self, asDict=False):
         if asDict:
             self.cur = self.conn.cursor(row_factory=dict_row)
         

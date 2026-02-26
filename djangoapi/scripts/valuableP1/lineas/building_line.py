@@ -30,7 +30,7 @@ class buildings_line():
         self.disconnect()
         print("Inserted")
 
-    def select(self, asDict=True):
+    def select(self, asDict=False):
         if asDict:
             #The rows are dicts
             self.cur=self.conn.cursor(row_factory=dict_row)
@@ -81,9 +81,9 @@ class buildings_line():
         # As there are 5 %s, you need a list with 5 values: 
         #   [description, area, the_geom_wkt, the_epsg_code, 
         #           the_id_to_select_the_row]
-        valuesList=['Río Huallaga (Tramo II)', 
-                     'LINESTRING(363197 8900999, 363644 8901327, 364481 8901843, 364784 8903006, 365398 8905356)',
-                     EPSG_CODE, 4]
+        valuesList=['Río Huallaga (Tramo II)', 'Tramo Ambo', 'Amazónico', 'Ambo',
+                     'LINESTRING(363199.5992 8900997.4254, 362768.5873 8900625.0546, 363709.7764 8896332.5288, 365351.7262 8892298.0237, 368166.4972 8880335.2469)',
+                     EPSG_CODE, 2]
         self.cur.execute(cons, valuesList)
         print(self.cur.rowcount)
         self.conn.commit()

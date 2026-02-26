@@ -1,9 +1,9 @@
 import sys
-#from puntos.insert_puntos import insert_punto
+
 from poligonos.building_polig import buildings_polig    
 from lineas.building_line import buildings_line
 from puntos.building_punto import buildings_point
-#from poligonos.insert_polyg import insert_poligono
+
 
 
 def main():
