@@ -1,7 +1,8 @@
 import sys
 #from puntos.insert_puntos import insert_punto
-from poligonos.building_polig import building_polig    
+from poligonos.building_polig import buildings_polig    
 from lineas.building_line import buildings_line
+from puntos.building_punto import buildings_point
 #from poligonos.insert_polyg import insert_poligono
 
 
@@ -37,25 +38,31 @@ def main():
         elif functionName=="delete":
             b.delete()
     elif tableName=="limit_politico":
-        b=building_polig()
+        b=buildings_polig()
         if functionName=="insert":
-            pass
+            b.insert()
         elif functionName=="select":
-            pass
+            b.select()
+        elif functionName=="selectAsDict":
+            b.select(asDict=True)
         elif functionName=="update":
-            pass
+            b.update()
         elif functionName=="delete":
-            pass
+            b.delete()
 
     elif tableName=="puntos_criticos":
+        b=buildings_point()
         if functionName=="insert":
-            pass
+            b.insert()
         elif functionName=="select":
-            pass
+            b.select()
+        elif functionName=="selectAsDict":
+            b.select(asDict=True)
         elif functionName=="update":
-            pass
+            b.update()
         elif functionName=="delete":
-            pass
+            b.delete()
+
 
 if __name__ == "__main__":
     main()
