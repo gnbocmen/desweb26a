@@ -16,14 +16,14 @@ class buildings_line():
         self.conn.close()
     def insert(self):
         cons="""
-        INSERT INTO rios 
-            (nombre, geom)
+        INSERT INTO b1.rios 
+            (nombre, descripcion, vertiente, provincia, geom)
         VALUES
-            (%s, ST_Transform(ST_GeomFromText(%s, 32718), %s))
+            (%s, %s, %s, %s, ST_Transform(ST_GeomFromText(%s, 32718), %s))
         RETURNING id
         """
         self.cur.execute(cons,
-                    ['Río Huallaga (Tramo Urbano)', 
+                    ['Río Huallaga I', 'Tramo Urbano', 'Amazónico', 'Huánuco', 
                      'LINESTRING(363197 8900999, 363644 8901327, 364481 8901843, 364784 8903006, 365398 8905356)', 
                      EPSG_CODE])
         self.conn.commit()
@@ -42,7 +42,7 @@ class buildings_line():
         SELECT 
             id, nombre,  st_astext(geom)
         FROM 
-            rios 
+            b1.rios 
         WHERE
             id=%s
         """
@@ -57,7 +57,7 @@ class buildings_line():
     def delete(self):
         cons="""
             DELETE FROM
-                rios 
+                b1.rios 
             WHERE
                 id=%s
             """
@@ -76,7 +76,7 @@ class buildings_line():
     def update(self):
         cons="""
             UPDATE
-                rios 
+                b1.rios 
             SET 
                 (nombre, geom) = ROW(%s, ST_Transform(ST_GeomFromText(%s, 32718), %s))    
 
