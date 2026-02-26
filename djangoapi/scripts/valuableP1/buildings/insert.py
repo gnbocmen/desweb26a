@@ -1,15 +1,15 @@
 
 import psycopg
 
-from myLib import p1settings
+from djangoapi.scripts.valuableP1.myLib import p1set_antiguo
 
 def connect():
     conn= psycopg.connect(
-        dbname=p1settings.POSTGRES_DB,
-        user=p1settings.POSTGRES_USER,
-        password=p1settings.POSTGRES_PASSWORD,
-        host=p1settings.POSTGRES_HOST,
-        port=p1settings.POSTGRES_PORT
+        dbname=p1set_antiguo.POSTGRES_DB,
+        user=p1set_antiguo.POSTGRES_USER,
+        password=p1set_antiguo.POSTGRES_PASSWORD,
+        host=p1set_antiguo.POSTGRES_HOST,
+        port=p1set_antiguo.POSTGRES_PORT
     )
 
     print('Conectado')
