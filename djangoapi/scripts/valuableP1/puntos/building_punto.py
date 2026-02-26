@@ -12,78 +12,88 @@ class buildings_point():
         self.cur.close()
         self.conn.close()
 
-    def insert(self):
-        cons = """
-        INSERT INTO b1.puntos_criticos 
-            (nombre, fuente, fecha, riesgo, geom)
-        VALUES
-            (%s, %s, %s, %s, ST_GeomFromText(%s, %s))
-        RETURNING id
-        """
-        # EPSG_CODE lo pasamos como parámetro para 4326
-        self.cur.execute(cons, [
-            'Huayopampa', 'ANA', 2024, 'Alto', 
-            'POINT(-76.23404 -9.91607)', EPSG_CODE
-        ])
-        self.conn.commit()
-        l = self.cur.fetchall()
-        print(l)
-        print(l[0][0])
-        self.disconnect()
-        print("Inserted")
+    def insert(self, data_dict):
+        try:
+            cons = """
+            INSERT INTO b1.puntos_criticos 
+                (nombre, fuente, fecha, riesgo, geom)
+            VALUES
+                (%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+            RETURNING id
+            """          
+            self.cur.execute(cons, [
+                data_dict['nombre'], data_dict['fuente'], 
+                data_dict['fecha'], data_dict['riesgo'], 
+                data_dict['geom'], EPSG_CODE
+            ])
+            self.conn.commit()
+            l = self.cur.fetchall()[0][0]
+            self.disconnect()
+            return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
+        
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error inserting data: {str(e)}", "data": None}
 
-    def select(self, asDict=False):
+    def select(self, asDict=False, data_dict=None):
         if asDict:
             self.cur = self.conn.cursor(row_factory=dict_row)
         
-        cons = """
-        SELECT 
-            id, nombre, fuente, fecha, riesgo, st_astext(geom)
-        FROM 
-            b1.puntos_criticos 
-        WHERE 
-            id = %s
-        """
-        self.cur.execute(cons, [1]) 
-        l = self.cur.fetchall()
-        print(l)
-        print('Primera Linea:')
-        print(l[0])
-        self.disconnect()
-        print("Selected")
-
-    def delete(self):
-        cons = """
-            DELETE FROM 
+        try:   
+            cons = """
+            SELECT 
+                id, nombre, fuente, fecha, riesgo, st_astext(geom)
+            FROM 
                 b1.puntos_criticos 
             WHERE 
                 id = %s
             """
-        valuesList=[3]
-        self.cur.execute(cons, valuesList)
-        print(self.cur.rowcount)
-        self.conn.commit()
-        self.disconnect()
-        print("Deleted")
+            self.cur.execute(cons, [data_dict['id']]) 
+            l = self.cur.fetchall()
+            self.disconnect()
+            print("Selected")
+            return {"ok": True, "message": "Data selected", "data": l}
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error selecting data: {str(e)}", "data": None}
 
-    def update(self):
-        cons = """
-        UPDATE 
-            b1.puntos_criticos 
-        SET 
-            (nombre, fuente, fecha, riesgo, geom) = 
-                ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
-        WHERE 
-            id = %s
-        """
-        valuesList = [
-            'Ambo-mesapata', 'Gob. Regional', 2025, 'Alto', 
-            'POINT(-76.178256 -10.122867)', EPSG_CODE, 2
-        ]
-        self.cur.execute(cons, valuesList)
-        print(self.cur.rowcount)
-        self.conn.commit()
-        self.disconnect()
-        print("Updated")
+    def delete(self, data_dict):
+        try:
+            cons = """
+                DELETE FROM 
+                    b1.puntos_criticos 
+                WHERE 
+                    id = %s
+                """
+            self.cur.execute(cons, [data_dict['id']])
+            self.conn.commit()
+            self.disconnect()
+            return {"ok": True, "message": "Data deleted", "data": data_dict['id']}
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error deleting data: {str(e)}", "data": None}
 
+    def update(self, data_dict):
+        try:
+            cons = """
+            UPDATE 
+                b1.puntos_criticos 
+            SET 
+                (nombre, fuente, fecha, riesgo, geom) = 
+                    ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+            WHERE 
+                id = %s
+            """
+            self.cur.execute(cons, [
+                data_dict['nombre'], data_dict['fuente'], 
+                data_dict['fecha'], data_dict['riesgo'], 
+                data_dict['geom'], EPSG_CODE, data_dict['id']
+            ])
+            self.conn.commit()
+            self.disconnect()
+            return {"ok": True, "message": "Data updated", "data": data_dict['id']}
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error updating data: {str(e)}", "data": None}
             
+

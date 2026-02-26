@@ -29,7 +29,7 @@ def main():
         b=buildings_line()
         if functionName=="insert":
             b.insert()
-        elif functionName=="select":
+        elif functionName=="selectAsTuple":
             b.select()
         elif functionName=="selectAsDict":
             b.select(asDict=True)
@@ -41,7 +41,7 @@ def main():
         b=buildings_polig()
         if functionName=="insert":
             b.insert()
-        elif functionName=="select":
+        elif functionName=="selectAsTuple":
             b.select()
         elif functionName=="selectAsDict":
             b.select(asDict=True)
@@ -54,7 +54,7 @@ def main():
         b=buildings_point()
         if functionName=="insert":
             b.insert()
-        elif functionName=="select":
+        elif functionName=="selectAsTuple":
             b.select()
         elif functionName=="selectAsDict":
             b.select(asDict=True)
