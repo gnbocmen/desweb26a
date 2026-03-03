@@ -8,85 +8,94 @@ class buildings_polig():
     def __init__(self):
         self.conn=connect()
         self.cur=self.conn.cursor()
+
     def disconnect(self):
         self.cur.close()
         self.conn.close()
-    def insert(self):
-        cons = """
-        INSERT INTO b1.limit_politico 
-            (nombre, departamento, provincia, poblacion, geom)
-        VALUES
-            (%s, %s, %s, %s, ST_GeomFromText(%s, %s))
-        RETURNING id
-        """
-        poligono = "POLYGON((-77.2917 -8.4836, -75.9927 -8.3194, -75.6607 -9.4335, -74.6224 -8.5445, -74.5198 -8.7820, -74.8709 -9.8787, -75.9921 -10.5052, -76.7636 -10.4916, -77.0461 -9.6385, -77.2917 -8.4836))"
-        
-        self.cur.execute(cons, [
-            'Región Huánuco', 'Huánuco', 'Huánuco', 854234, 
-            poligono, EPSG_CODE
-        ])
-        self.conn.commit()
-        l=self.cur.fetchall()
-        print(l)
-        print(l[0][0])
-        self.disconnect()
-        print("Inserted")
 
-    def select(self, asDict=False):
+    def insert(self, data_dict):
+        try:
+            cons = """
+            INSERT INTO b1.limit_politico 
+                (nombre, departamento, provincia, poblacion, geom)
+            VALUES
+                (%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
+            RETURNING id
+            """        
+        
+            self.cur.execute(cons, [
+                data_dict['nombre'], data_dict['departamento'], data_dict['provincia'], data_dict['poblacion'], 
+                data_dict['geom'], EPSG_CODE])
+            
+            self.conn.commit()
+            l=self.cur.fetchall()[0][0]
+            self.disconnect()
+            return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
+        
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error inserting data: {str(e)}", "data": None}
+
+    def select(self, data_dict, asDict=False):
         if asDict:
             self.cur = self.conn.cursor(row_factory=dict_row)
         
-        cons = """
-        SELECT 
-            id, nombre, poblacion, st_astext(geom) 
-        FROM 
-            b1.limit_politico 
-        WHERE 
-            id = %s
-        """
-        self.cur.execute(cons, [1])
-        l=self.cur.fetchall()
-        print(l)
-        print('Primera Linea:')
-        print(l[0])
-        self.disconnect()
-        print("Selected")
-
-    def delete(self):
-        cons="""
-            DELETE FROM
+        try:
+            cons = """
+            SELECT 
+                id, nombre, poblacion, ST_AsText(ST_SnapToGrid(geom, 0.0001)) as geom
+            FROM 
                 b1.limit_politico 
-            WHERE
-                id=%s
+            WHERE 
+                id = %s
             """
-        valuesList=[4]
-        self.cur.execute(cons, valuesList)
-        print(self.cur.rowcount)
-        self.conn.commit()
-        self.disconnect()
-        print("Deleted")
-
-    def update(self):
-        cons = """
-        UPDATE 
-            b1.limit_politico 
-        SET 
-            (nombre, departamento, provincia, poblacion, geom) = 
-                ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
-        WHERE 
-            id = %s
-        """
-        poligono_nuevo = "POLYGON((-76.515 -10.1536, -76.144 -9.9769, -76.03544 -10.1029, -76.03679 -10.5152, -76.51758 -10.30803, -76.515 -10.1536))" 
+            self.cur.execute(cons, [data_dict['id']])
+            l=self.cur.fetchall()
+            self.disconnect()
+            return {"ok": True, "message": "Data selected", "data": l}
         
-        valuesList = [
-            'Provincia Ambo', 'Huánuco', 'Ambo', 50880, 
-            poligono_nuevo, EPSG_CODE, 1
-        ]
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error selecting data: {str(e)}", "data": None}
 
-        self.cur.execute(cons, valuesList)
-        print(self.cur.rowcount)
-        self.conn.commit()
-        self.disconnect()
-        print("Updated")
+    def delete(self, data_dict):
+        try:
+            cons="""
+                DELETE FROM
+                    b1.limit_politico 
+                WHERE
+                    id=%s
+                """
+            self.cur.execute(cons, [data_dict['id']])
+            self.conn.commit()
+            self.disconnect()
+            return {"ok": True, "message": "Data deleted", "data": data_dict['id']}
 
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error deleting data: {str(e)}", "data": None}
+
+    def update(self, data_dict):
+        try:
+            cons = """
+            UPDATE 
+                b1.limit_politico 
+            SET 
+                (nombre, departamento, provincia, poblacion, geom) = 
+                    ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+            WHERE 
+                id = %s
+            """
+
+            self.cur.execute(cons, [
+                data_dict['nombre'], data_dict['departamento'], data_dict['provincia'], data_dict['poblacion'], 
+                data_dict['geom'], EPSG_CODE, data_dict['id']])
+
+            self.conn.commit()
+            self.disconnect()
+            return {"ok": True, "message": "Data updated", "data": data_dict['id']}
+        
+        except Exception as e:
+            self.disconnect()
+            return {"ok": False, "message": f"Error updating data: {str(e)}", "data": None}
 

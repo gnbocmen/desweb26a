@@ -18,7 +18,7 @@ class buildings_point():
             INSERT INTO b1.puntos_criticos 
                 (nombre, fuente, fecha, riesgo, geom)
             VALUES
-                (%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+                (%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
             RETURNING id
             """          
             self.cur.execute(cons, [
@@ -35,14 +35,14 @@ class buildings_point():
             self.disconnect()
             return {"ok": False, "message": f"Error inserting data: {str(e)}", "data": None}
 
-    def select(self, asDict=False, data_dict=None):
+    def select(self, data_dict, asDict=False):
         if asDict:
             self.cur = self.conn.cursor(row_factory=dict_row)
         
         try:   
             cons = """
             SELECT 
-                id, nombre, fuente, fecha, riesgo, st_astext(geom)
+                id, nombre, fuente, fecha, riesgo, ST_AsText(geom) AS geom
             FROM 
                 b1.puntos_criticos 
             WHERE 
@@ -80,7 +80,7 @@ class buildings_point():
                 b1.puntos_criticos 
             SET 
                 (nombre, fuente, fecha, riesgo, geom) = 
-                    ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+                    ROW(%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
             WHERE 
                 id = %s
             """
