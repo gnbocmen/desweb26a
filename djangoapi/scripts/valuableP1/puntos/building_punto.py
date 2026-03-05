@@ -12,6 +12,20 @@ class buildings_point():
         self.cur.close()
         self.conn.close()
 
+    def validate_data(self, data_dict):
+        self.cur.execute("SELECT ST_ISVALID(%s)", [data_dict['geom']])
+        is_valid = self.cur.fetchall()[0][0]
+        if not is_valid:
+            return False, "Invalid geometry"
+        query = """
+        SELECT ST_WITHIN(ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001), (SELECT geom FROM b1.limit_politico WHERE id = 1))
+        """
+        self.cur.execute(query, [data_dict['geom'], EPSG_CODE])
+        is_within = self.cur.fetchall()[0][0]
+        if not is_within:
+            return False, "Geometria no esta dentro de la frontera politica"
+        return True
+
     def insert(self, data_dict):
         try:
             cons = """
@@ -21,15 +35,16 @@ class buildings_point():
                 (%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
             RETURNING id
             """          
-            self.cur.execute(cons, [
-                data_dict['nombre'], data_dict['fuente'], 
-                data_dict['fecha'], data_dict['riesgo'], 
-                data_dict['geom'], EPSG_CODE
-            ])
-            self.conn.commit()
-            l = self.cur.fetchall()[0][0]
-            self.disconnect()
-            return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
+            if self.validate_data(data_dict):
+                self.cur.execute(cons, [
+                    data_dict['nombre'], data_dict['fuente'], 
+                    data_dict['fecha'], data_dict['riesgo'], 
+                    data_dict['geom'], EPSG_CODE
+                ])
+                self.conn.commit()
+                l = self.cur.fetchall()[0][0]
+                self.disconnect()
+                return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
         
         except Exception as e:
             self.disconnect()

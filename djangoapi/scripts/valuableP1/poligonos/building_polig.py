@@ -13,6 +13,30 @@ class buildings_polig():
         self.cur.close()
         self.conn.close()
 
+    def validate_data(self, data_dict):
+        self.cur.execute("SELECT ST_ISVALID(%s)", [data_dict['geom']])
+        is_valid = self.cur.fetchall()[0][0]
+        if not is_valid:
+            return False, "Invalid geometry"
+        query = """
+        SELECT ST_WITHIN(ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001), (SELECT geom FROM b1.limit_politico WHERE id = 1))
+        """
+        self.cur.execute(query, [data_dict['geom'], EPSG_CODE])
+        is_within = self.cur.fetchall()[0][0]
+        if not is_within:
+            return False, "Geometria no esta dentro de la frontera politica"
+        query2 = """
+        SELECT ST_RELATE(%s, (SELECT geom FROM b1.limit_politico WHERE id != 1), 'T********') 
+        """
+        self.cur.execute(query2, [data_dict['geom']])
+        is_relate = self.cur.fetchall()[0][0]
+        if is_relate:
+            return False, "Geometria se interseca con otro limite politico"
+        
+        return True
+
+
+
     def insert(self, data_dict):
         try:
             cons = """

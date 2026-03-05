@@ -80,7 +80,8 @@ INSTALLED_APPS = [
     'codelist',
     'buildings',
     'flowers',
-    'accidentes'
+    'accidentes',
+    'risk'
 ]
 
 MIDDLEWARE = [
