@@ -81,7 +81,11 @@ INSTALLED_APPS = [
     'buildings',
     'flowers',
     'accidentes',
+<<<<<<< Updated upstream
     'risk'
+=======
+    'buildings2'
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
