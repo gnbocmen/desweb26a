@@ -27,7 +27,7 @@ class Rivers(models.Model):
     vertiente = models.CharField(max_length=100, blank=True, null=True)
     longitud =models.FloatField(blank=True, null=True)
     provincia = models.CharField(max_length=100, blank=True, null=True)
-    geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
+    geom = gis_models.LineStringField(srid=4326, blank=True, null=True)
     data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
 
     def save(self, *args, **kwargs):
