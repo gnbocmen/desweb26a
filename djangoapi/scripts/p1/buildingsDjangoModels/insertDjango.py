@@ -96,15 +96,8 @@ def run():
     d_of_values= {
         'description':'Edificio 1', 
         'height':100, 
-<<<<<<< Updated upstream
-=======
         'area':2000,
->>>>>>> Stashed changes
         'geom':'POLYGON((0 0, 10 0, 10 10, 0 11, 0 0))'
     }
     
     print(insert3(d_of_values))
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
