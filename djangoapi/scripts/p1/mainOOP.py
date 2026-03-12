@@ -1,9 +1,6 @@
 import sys
+from buildings.buildingsOOP import BuildingsOOP
 
-from buildings.insert import insert as insert_building
-from buildings.select import select as select_building
-from buildings.update import update as update_building
-from buildings.delete import delete as delete_building
 
 def main():
     # sys.argv[0] es siempre el nombre del archivo (main.py)
@@ -20,27 +17,26 @@ def main():
         print("Error: The available table names are buildings, trees, water")
         sys.exit(0)
     
-    if functionName not in ["insert", "select", "update", "delete"]:
+    if functionName not in ["insert", "select", "selectAsDict", "update", "delete"]:
         print("Error the available function names are insert, select, delete or update")
         sys.exit(0)
 
     if tableName == "buildings":
+        b=BuildingsOOP()
         if functionName=="insert":
-            insert_building()
+            b.insert()
         elif functionName=="select":
-            select_building()
+            b.select()
         elif functionName=="selectAsDict":
-            select_building(asDict=True)
+            b.select(asDict=True)
         elif functionName=="update":
-            update_building()
+            pass
         elif functionName=="delete":
-            delete_building()
+            pass
     elif tableName=="trees":
         if functionName=="insert":
             pass
         elif functionName=="select":
-            pass
-        elif functionName=="selectAsDict":
             pass
         elif functionName=="update":
             pass
