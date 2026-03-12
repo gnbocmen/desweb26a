@@ -14,10 +14,11 @@ class buildings_polig():
         self.conn.close()
 
     def validate_data(self, data_dict):
-        self.cur.execute("SELECT ST_ISVALID(%s)", [data_dict['geom']])
+        self.cur.execute("SELECT ST_ISVALID(ST_GeomFromText(%s, %s))", [data_dict['geom']], EPSG_CODE)
         is_valid = self.cur.fetchall()[0][0]
         if not is_valid:
             return False, "Invalid geometry"
+        
         query = """
         SELECT ST_WITHIN(ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001), (SELECT geom FROM b1.limit_politico WHERE id = 1))
         """
@@ -25,20 +26,27 @@ class buildings_polig():
         is_within = self.cur.fetchall()[0][0]
         if not is_within:
             return False, "Geometria no esta dentro de la frontera politica"
+        
         query2 = """
-        SELECT ST_RELATE(%s, (SELECT geom FROM b1.limit_politico WHERE id != 1), 'T********') 
+        SELECT EXISTS (SELECT 1 FROM b1.limit_politico WHERE ID != 1 AND ID != %s 
+        AND ST_RELATE(geom, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001), 'T********')) 
         """
-        self.cur.execute(query2, [data_dict['geom']])
+        self.cur.execute(query2, [ data_dict.get('id',-1), data_dict['geom'], EPSG_CODE])
         is_relate = self.cur.fetchall()[0][0]
         if is_relate:
             return False, "Geometria se interseca con otro limite politico"
         
-        return True
+        return True, 'Geometría Válida'
 
 
 
     def insert(self, data_dict):
         try:
+            es_valido, mensaje = self.validate_data(data_dict)
+            if not es_valido:
+                self.disconnect()
+                return {"ok": False, "message": mensaje, "data": None}
+
             cons = """
             INSERT INTO b1.limit_politico 
                 (nombre, departamento, provincia, poblacion, geom)
@@ -101,12 +109,17 @@ class buildings_polig():
 
     def update(self, data_dict):
         try:
+            es_valido, mensaje = self.validate_data(data_dict)
+            if not es_valido:
+                self.disconnect()
+                return {"ok": False, "message": mensaje, "data": None}
+
             cons = """
             UPDATE 
                 b1.limit_politico 
             SET 
                 (nombre, departamento, provincia, poblacion, geom) = 
-                    ROW(%s, %s, %s, %s, ST_GeomFromText(%s, %s))
+                    ROW(%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
             WHERE 
                 id = %s
             """

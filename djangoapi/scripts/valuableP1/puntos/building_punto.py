@@ -13,10 +13,10 @@ class buildings_point():
         self.conn.close()
 
     def validate_data(self, data_dict):
-        self.cur.execute("SELECT ST_ISVALID(%s)", [data_dict['geom']])
+        self.cur.execute("SELECT ST_ISVALID(ST_GeomFromText(%s, %s))", [data_dict['geom']], EPSG_CODE)
         is_valid = self.cur.fetchall()[0][0]
         if not is_valid:
-            return False, "Invalid geometry"
+            return False, "Geometria inválida"
         query = """
         SELECT ST_WITHIN(ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001), (SELECT geom FROM b1.limit_politico WHERE id = 1))
         """
@@ -24,10 +24,15 @@ class buildings_point():
         is_within = self.cur.fetchall()[0][0]
         if not is_within:
             return False, "Geometria no esta dentro de la frontera politica"
-        return True
+        return True, 'Geometría Válida'
 
     def insert(self, data_dict):
         try:
+            es_valido, mensaje = self.validate_data(data_dict)
+            if not es_valido:
+                self.disconnect()
+                return {"ok": False, "message": mensaje, "data": None}
+
             cons = """
             INSERT INTO b1.puntos_criticos 
                 (nombre, fuente, fecha, riesgo, geom)
@@ -35,17 +40,17 @@ class buildings_point():
                 (%s, %s, %s, %s, ST_SnapToGrid(ST_GeomFromText(%s, %s), 0.0001))
             RETURNING id
             """          
-            if self.validate_data(data_dict):
-                self.cur.execute(cons, [
-                    data_dict['nombre'], data_dict['fuente'], 
-                    data_dict['fecha'], data_dict['riesgo'], 
-                    data_dict['geom'], EPSG_CODE
-                ])
-                self.conn.commit()
-                l = self.cur.fetchall()[0][0]
-                self.disconnect()
-                return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
-        
+            
+            self.cur.execute(cons, [
+                data_dict['nombre'], data_dict['fuente'], 
+                data_dict['fecha'], data_dict['riesgo'], 
+                data_dict['geom'], EPSG_CODE
+            ])
+            self.conn.commit()
+            l = self.cur.fetchall()[0][0]
+            self.disconnect()
+            return {"ok": True, "message": "Data inserted", "data": [{"id": l}]}
+    
         except Exception as e:
             self.disconnect()
             return {"ok": False, "message": f"Error inserting data: {str(e)}", "data": None}
@@ -90,6 +95,11 @@ class buildings_point():
 
     def update(self, data_dict):
         try:
+            es_valido, mensaje = self.validate_data(data_dict)
+            if not es_valido:
+                self.disconnect()
+                return {"ok": False, "message": mensaje, "data": None}
+            
             cons = """
             UPDATE 
                 b1.puntos_criticos 
