@@ -1,7 +1,7 @@
 from psycopg.rows import dict_row
 
 from myLib.connect import connect
-from myLib.p1Settings import EPSG_CODE
+from myLib.p1settings import EPSG_CODE
 
 
 class buildings_polig():
