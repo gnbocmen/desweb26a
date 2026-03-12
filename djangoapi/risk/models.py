@@ -1,15 +1,60 @@
 from django.db import models
 from django.contrib.gis.db import models as gis_models
+import django.utils.timezone as djangoTimezone
 
 # Create your models here.
-class Buildings(models.Model):
+class Points_crit(models.Model):
 
-    description = models.CharField(max_length=100, blank=True, null=True)
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+    fuente = models.CharField(max_length=100, blank=True, null=True)
+    nivel = models.CharField(max_length=100, blank=True, null=True)
+    year =models.FloatField(blank=True, null=True)
+    geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
+    data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
+
+    def save(self, *args, **kwargs):
+            # Calculate values from the geometry before saving
+            if self.geom:
+                self.area = self.geom.area
+                self.perimeter = self.geom.length
+            
+            super().save(*args, **kwargs)
+
+class Rivers(models.Model):
+
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+    descripcion = models.CharField(max_length=100, blank=True, null=True)
+    vertiente = models.CharField(max_length=100, blank=True, null=True)
+    longitud =models.FloatField(blank=True, null=True)
+    provincia = models.CharField(max_length=100, blank=True, null=True)
+    geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
+    data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
+
+    def save(self, *args, **kwargs):
+            # Calculate values from the geometry before saving
+            if self.geom:
+                self.area = self.geom.area
+                self.perimeter = self.geom.length
+            
+            super().save(*args, **kwargs)
+
+class Limit_politic(models.Model):
+
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+    provincia = models.CharField(max_length=100, blank=True, null=True)
     area = models.FloatField(blank=True, null=True)
     perimeter =models.FloatField(blank=True, null=True)
     year =models.FloatField(blank=True, null=True)
-    geom = gis_models.PolygonField(srid=25830, blank=True, null=True)
+    geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
+    data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
 
+    def save(self, *args, **kwargs):
+            # Calculate values from the geometry before saving
+            if self.geom:
+                self.area = self.geom.area
+                self.perimeter = self.geom.length
+            
+            super().save(*args, **kwargs)
 
 #añadiendo esto solo conectaría a la tabla y no haría ningún cambio a los campos.
     # class meta:
