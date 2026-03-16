@@ -27,12 +27,13 @@ class buildings_line():
         query2 = """
         SELECT EXISTS (
             SELECT 1 FROM b1.rios WHERE ID != %s 
-            AND ST_OVERLAPS(geom, ST_Transform(ST_GeomFromText(%s, 32718), %s)))
+            AND ST_RELATE(geom, ST_SnapToGrid(ST_Transform(ST_GeomFromText(%s, 32718), %s), 0.0001), 'T********')
+        )
         """
-        self.cur.execute(query2, [data_dict['geom'], data_dict.get('id',-1)])
+        self.cur.execute(query2, [data_dict.get('id', -1), data_dict['geom'], EPSG_CODE])
         is_relate = self.cur.fetchall()[0][0]
         if is_relate:
-            return False, "Geometria se interseca con otro limite politico"
+            return False, "Geometria se interseca con otro rio"
         return True, "valido"
 
     def insert(self, data_dict):

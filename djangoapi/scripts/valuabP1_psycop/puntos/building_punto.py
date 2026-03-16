@@ -13,7 +13,7 @@ class buildings_point():
         self.conn.close()
 
     def validate_data(self, data_dict):
-        self.cur.execute("SELECT ST_ISVALID(ST_GeomFromText(%s, %s))", [data_dict['geom']], EPSG_CODE)
+        self.cur.execute("SELECT ST_ISVALID(ST_GeomFromText(%s, %s))", [data_dict['geom'], EPSG_CODE])
         is_valid = self.cur.fetchall()[0][0]
         if not is_valid:
             return False, "Geometria inválida"

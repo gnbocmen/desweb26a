@@ -1,13 +1,13 @@
 import psycopg
-from valuableP1.myLib import p1Settings
+from valuabP1_psycop.myLib import p1settings
 
 def connect():
     conn = psycopg.connect(
-        dbname=p1Settings.POSTGRES_DB,
-        user=p1Settings.POSTGRES_USER,
-        password=p1Settings.POSTGRES_PASSWORD,
-        host=p1Settings.POSTGRES_HOST,
-        port=p1Settings.POSTGRES_PORT
+        dbname=p1settings.POSTGRES_DB,
+        user=p1settings.POSTGRES_USER,
+        password=p1settings.POSTGRES_PASSWORD,
+        host=p1settings.POSTGRES_HOST,
+        port=p1settings.POSTGRES_PORT
     )
     return conn
 

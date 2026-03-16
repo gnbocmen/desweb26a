@@ -7,34 +7,40 @@ from puntos.building_punto import buildings_point
 
 
 datos_nuevo_punto = {
-        "id": 3,
-        "nombre": "Rio Huallaga Ambo",
-        "fuente": "ANA",
-        "fecha": 2025,
-        "riesgo": "Alto",
-        "geom": "POINT(-76.19989 -10.13202)"
+    # FALLA 2: ST_Within (Extremadamente fuera. Coordenadas de la estación Benimaclet en Valencia)
+        "id": 91, "nombre": "Falla Dentro 2", "fuente": "Test", "fecha": 2026, "riesgo": "Bajo", 
+        "geom": "POINT(-0.3621 39.4802)"
+        # "id": 11, 
+        # "nombre": "Uchucyacu", 
+        # "fuente": "INGEMMET", 
+        # "fecha": 2025, 
+        # "riesgo": "Muy Alto", 
+        # "geom": "POINT(-76.31916 -10.26356)"
     }
 
 datos_nueva_linea = {
-    "id": 3,
-    "nombre": "Río Huallaga Tingo María",
-    "descripcion": "Tramo Ciudad de Tingo María",
-    "vertiente": "Amazónico",
-    "provincia": "Leoncio Prado",
-    "geom": 'LINESTRING(404391.59 8937586.72, 392599.98 8955145.77, 393954.33 8957740.35, 392312.94 8966464.28, '
-    '389248.90 8969990.44, 389970.10 8972605.58, 390347.70 8981587.13, 388109.39 8987323.85)'
-}
+        # FALLA 3: ST_Relate (Se cruza como una "X" cortando exactamente por la mitad al "Río Huallaga Tramo Ambo" que insertaste antes)
+        "id": 10, "nombre": "Río Cruzado", "descripcion": "Choca con otro río", "vertiente": "N/A", "provincia": "Test", 
+        "geom": "LINESTRING(367000 8882000, 369500 8882000)"
+        # "id": 4,
+        # "nombre": "Río Huallaga",
+        # "descripcion": "Tramo de Santa María del Valle",
+        # "vertiente": "Amazónico",
+        # "provincia": "Huánuco",
+        # "geom": "LINESTRING(365398 8905356, 370039.10868 8907829.69582, 373017.805239 8912749.058326, 377576.1136155 8915908.2819537, 377576.113615 8915908.28195)"
+    }
 
 
 datos_nuevo_poligono = {
-    "id": 5,
-    "nombre": "Provincia",
-    "departamento": "Huánuco",
-    "provincia": "Huánuco",
-    "poblacion": 318535,
-    "geom": 'SRID=4326; POLYGON((-76.511238 -10.154535, -76.5174297 -10.1869513, -76.602283 -10.090962, -76.477371 -9.747242, '
-    '-76.35468548 -9.5415351, -76.14317648 -9.46988235, -75.9577062 -9.4935442, -75.77123010 -9.7880332, -75.819989 -9.8304533, '
-    '-76.0501698 -9.823050, -76.1355214 -9.98829097, -76.14459528 -9.9769758, -76.511238 -10.154535))'
+    # FALLA 3: ST_Relate (Polígono que se come la mitad del distrito de "Amarilis" que cargaste antes)
+        "id": 98, "nombre": "Polígono Interseca", "departamento": "Test", "provincia": "Test", "poblacion": 0, 
+        "geom": "POLYGON((-76.22 -9.93, -76.20 -9.93, -76.20 -9.91, -76.22 -9.91, -76.22 -9.93))"
+    # "id": 11,
+    #     "nombre": "Ambo",
+    #     "departamento": "Huánuco",
+    #     "provincia": "Ambo",
+    #     "poblacion": 15000,
+    #     "geom": "POLYGON((-76.2000 -10.1500, -76.1500 -10.1500, -76.1500 -10.1000, -76.2000 -10.1000, -76.2000 -10.1500))"
 }
 
 #Id para funciones select y delete
