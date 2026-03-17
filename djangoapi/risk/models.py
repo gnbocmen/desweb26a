@@ -14,9 +14,11 @@ class Points_crit(models.Model):
 
     def save(self, *args, **kwargs):
             # Calculate values from the geometry before saving
-            if self.geom:
-                self.area = self.geom.area
-                self.perimeter = self.geom.length
+            # if self.geom:
+            #     # Transformamos temporalmente a UTM (32718) para medir en metros
+            #     geom_utm = self.geom.transform(32718, clone=True)
+            #     self.area = geom_utm.area
+            #     self.perimeter = geom_utm.length
             
             super().save(*args, **kwargs)
 
@@ -33,8 +35,10 @@ class Rivers(models.Model):
     def save(self, *args, **kwargs):
             # Calculate values from the geometry before saving
             if self.geom:
-                self.area = self.geom.area
-                self.perimeter = self.geom.length
+                # Transformamos temporalmente a UTM (32718) para medir en metros
+                geom_utm = self.geom.transform(32718, clone=True)
+                #self.area = geom_utm.area
+                self.perimeter = geom_utm.length
             
             super().save(*args, **kwargs)
 
@@ -44,15 +48,17 @@ class Limit_politic(models.Model):
     provincia = models.CharField(max_length=100, blank=True, null=True)
     area = models.FloatField(blank=True, null=True)
     perimeter =models.FloatField(blank=True, null=True)
-    year =models.FloatField(blank=True, null=True)
+    poblacion =models.FloatField(blank=True, null=True)
     geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
     data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
 
     def save(self, *args, **kwargs):
             # Calculate values from the geometry before saving
             if self.geom:
-                self.area = self.geom.area
-                self.perimeter = self.geom.length
+                # Transformamos temporalmente a UTM (32718) para medir en metros
+                geom_utm = self.geom.transform(32718, clone=True)
+                self.area = geom_utm.area
+                self.perimeter = geom_utm.length
             
             super().save(*args, **kwargs)
 
