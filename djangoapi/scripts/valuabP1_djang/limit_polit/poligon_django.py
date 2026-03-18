@@ -124,34 +124,37 @@ class limite_politic_class():
                 'data':[d]}
 
 
-    def select(self, d:dict, asDict=False):
+    def selectAsDict(self, d:dict):
     #create the geometry with geos
         f=Limit_politic.objects.filter(id=d['id'])
         l=list(f)
         if len(l)<1:
-            return {"ok":False, "Message": f"No Poligon with the id {d['id']}", "data":None}
+            return {"ok":False, "Message": f"No River with the id {d['id']}", "data":None}
         
+        b=l[0]
         writer = WKTWriter(precision=4)
-        if asDict:
-            dc = list(f.values( ))
-
-            for i in dc:
-                if i.get('geom'):
-                    i['geom'] = writer.write(i['geom'])
-                if i.get('data_creation'):
-                    i['data_creation'] = i['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
-            return {'ok':True, 'Message': f"Retriewed Poligon: {len(l)}",
-                'data':dc}
-
-        else:
-
-            b=f.first()
-            b:Limit_politic=l[0]
-            d=model_to_dict(b)
-            d['geom']=writer.write(b.geom)
-            d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
-            return {'ok':True, 'Message': f"Retriewed Poligon: {len(l)}",
+        d=model_to_dict(b)
+        d['geom']=writer.write(b.geom)
+        d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
+        return {'ok':True, 'Message': f"Retriewed Poligon: {len(l)}",
                 'data':[d]}
+        
+
+    def selectAsTuples(self, d:dict):
+    #create the geometry with geos
+        f=Limit_politic.objects.filter(id=d['id'])
+        l=list(f)
+        if len(l)<1:
+            return {"ok":False, "Message": f"No River with the id {d['id']}", "data":None}
+        
+        b=l[0]
+        writer = WKTWriter(precision=4)
+        geom_wkt=writer.write(b.geom)
+        data_creation_str = b.data_creation.strftime("%Y-%m-%d %H:%M:%S")
+
+        tup= (b.id, b.nombre, b.provincia, b.poblacion, b.area, b.perimeter, geom_wkt, data_creation_str)
+        return {'ok':True, 'Message': f"Retrieved River as Tuple: {len(l)}", 
+                'data':[tup]}
 
     def delete(self, d:dict):
 

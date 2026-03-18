@@ -9,7 +9,7 @@ class Points_crit(models.Model):
     fuente = models.CharField(max_length=100, blank=True, null=True)
     nivel = models.CharField(max_length=100, blank=True, null=True)
     year =models.FloatField(blank=True, null=True)
-    geom = gis_models.PolygonField(srid=4326, blank=True, null=True)
+    geom = gis_models.PointField(srid=4326, blank=True, null=True)
     data_creation = models.DateTimeField(blank = True, db_default=djangoTimezone.now())
 
     def save(self, *args, **kwargs):
