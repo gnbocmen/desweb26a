@@ -13,10 +13,13 @@ All parameters are received in string format
 
 """
 import sys
+#importar las clases
 from scripts.valuabP1_djang.limit_polit.poligon_django import limite_politic_class
 from scripts.valuabP1_djang.rivers.lines_django import Rivers_class
 from scripts.valuabP1_djang.points_crit.pc_django import Puntos_class
 
+
+##srid de la tabla 4326. de peru utm 32718. de españa 25830.
 
 def run(*args):
     """python manage.py runscript scripts.valuabP1_djang.mainDjango --script-args limit_politico insert
@@ -38,8 +41,8 @@ def run(*args):
         print("Error: The available table names are limit_politico, rivers, points_crit")
         sys.exit(0)
     
-    if functionName not in ["insert", "selectAsTuples", "selectAsDict", "update", "delete"]:
-        print("Error the available function names are insert, select, selectAsDict, delete or update")
+    if functionName not in ["insert", "selectAsTuples", "selectallAsDicts", "selectAsDict", "update", "delete"]:
+        print("Error the available function names are insert, selectAsTuples, selectallAsDicts, selectAsDict, delete or update")
         sys.exit(0)
 
     #diccionario para select y delete
@@ -58,40 +61,44 @@ def run(*args):
     }
     datos_rio = {
         # FALLA 3: ST_Relate (Se cruza como una "X" cortando exactamente por la mitad al "Río Huallaga Tramo Ambo" que insertaste antes)
-        "id": 95, "nombre": "Río Cruzado", "descripcion": "Choca con otro río", "vertiente": "N/A", "provincia": "Test", 
-        "geom": "LINESTRING(367000 8882000, 369500 8882000)"
-        # "id": 10,
-        # "nombre": "Río Marañón",
-        # "descripcion": "Tramo La Unión-Huamalíes",
-        # "vertiente": "Atlántico",
-        # "provincia": "Huamalíes",
-        # "geom": "LINESTRING(302500 8911000, 303000 8915000, 303500 8920000, 304000 8925000, 305000 8930000)"
+        # "id": 95, "nombre": "Río Cruzado", "descripcion": "Choca con otro río", "vertiente": "N/A", "provincia": "Test", 
+        # "geom": "LINESTRING(367000 8882000, 369500 8882000)"
+        "id": 20, 
+    "nombre": "Río Ebro", 
+    "descripcion": "Tramo Bajo Huamalíes", 
+    "vertiente": "Atlántico", 
+    "longitud": 18500.5, 
+    "provincia": "Huamalíes", 
+    "geom": "LINESTRING(302000 8910000, 303000 8915000)"
     }
 
     datos_punto = {
         # FALLA : 
-        "id": 92, "nombre": "Falla Validez", "fuente": "Test", "year": 2026, "nivel": "Bajo", 
-        "geom": "POINT(-80.000 -10.000)"
-        # "id": 10, 
-        # "nombre": "Uchucyacu", 
-        # "fuente": "INGEMMET", 
-        # "year": 2025, 
-        # "nivel": "Muy Alto", 
-        # "geom": "POINT(-76.31916 -10.26356)"
+        #"id": 92, "nombre": "Fuerea", "fuente": "Test", "year": 2026, "nivel": "Bajo", 
+        #"geom": "POINT(-50.000 10.000)"
+         
+    "nombre": "Deslizamiento  Carpish", 
+    "fuente": "INDECI", 
+    "nivel": "Muy Alto", 
+    "year": 2025, 
+    "geom": "POINT(-76.1012 -9.7185)"
     }
 
     if tableName == "limit_politico":
         b = limite_politic_class()
         if functionName=="insert":
-            print(b.insert(datos_rio))
+            print(b.insert(datos_poligono))
         elif functionName=="selectAsDict":
             print(b.selectAsDict(dict_id))
         elif functionName=="selectAsTuples":
             print(b.selectAsTuples(dict_id))
         elif functionName=="update":
-            print(b.update(datos_rio))
+            print(b.update(datos_poligono))
         elif functionName=="delete":
             print(b.delete(dict_id))
+        elif functionName=="selectallAsDicts":
+            print(b.selectallAsDicts())
+
     elif tableName=="rivers":
         b = Rivers_class()
         if functionName=="insert":
@@ -104,6 +111,9 @@ def run(*args):
             print(b.update(datos_rio))
         elif functionName=="delete":
             print(b.delete(dict_id))
+        elif functionName=="selectallAsDicts":
+            print(b.selectallAsDicts())
+
     
     elif tableName=="points_crit":
         b = Puntos_class()
@@ -117,6 +127,9 @@ def run(*args):
             print(b.update(datos_punto))
         elif functionName=="delete":
             print(b.delete(dict_id))
+        elif functionName=="selectallAsDicts":
+            print(b.selectallAsDicts())
+
 
 if __name__ == "__main__":
     run()

@@ -5,6 +5,7 @@ from lineas.building_line import buildings_line
 from puntos.building_punto import buildings_point
 
 
+##srid de la tabla 4326. de peru utm 32718. de españa 25830.
 
 datos_nuevo_punto = {
     # FALLA 2: ST_Within (Extremadamente fuera. Coordenadas de la estación Benimaclet en Valencia)

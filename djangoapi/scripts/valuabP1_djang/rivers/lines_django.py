@@ -52,8 +52,10 @@ class Rivers_class():
         g_utm = g.transform(EPSG_FOR_GEOMETRIES, clone=True)
         d['geom']=g
         d['longitud']=g_utm.length
+        ##el ** desempaqueta el diccionario permitiendo que las claves sean nombres del parámetro y los valores en valores.
         b=Rivers(**d)
         b.save()
+        #convertimos una instancia de modelo de django a diccionario
         d=model_to_dict(b)
         d['geom']=g.wkt
         d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
@@ -119,7 +121,9 @@ class Rivers_class():
 
 
     def selectAsDict(self, d:dict):
-    #create the geometry with geos
+    #filtrar por rango menor y mayor: Limit_politic.objects.filter(id__lt=3) o Limit_politic.objects.filter(id__gt=4)
+    #por area creo tambien: Limit_politic.objects.filter(area__lt=100) o Limit_politic.objects.filter(area__gt=100)
+
         f=Rivers.objects.filter(id=d['id'])
         l=list(f)
         if len(l)<1:
@@ -149,6 +153,20 @@ class Rivers_class():
         tup= (b.id, b.nombre, b.descripcion, b.vertiente, b.longitud, b.provincia, geom_wkt, data_creation_str)
         return {'ok':True, 'Message': f"Retrieved River as Tuple: {len(l)}", 
                 'data':[tup]}
+
+    def selectallAsDicts(self):
+        l = Rivers.objects.all()
+        data = []
+        writer = WKTWriter(precision=4)
+        
+        for b in l:
+            d = model_to_dict(b)
+            d['geom'] = writer.write(b.geom)
+            d['data_creation'] = d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
+                
+            data.append(d)
+            
+        return {'ok': True, 'Message': 'Data retrieved', 'data': data}
 
     def delete(self, d:dict):
 

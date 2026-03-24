@@ -19,6 +19,7 @@ class Puntos_class():
         #print(f'snapped_wkb_geometry: {snapped_wkb_geometry}')
 
         #now we can check if it is valid as before:
+        #srid de la tabla 4326. 
         g=GEOSGeometry(snapped_wkb_geometry, srid=4326)
         
         if not g.valid:
@@ -36,8 +37,10 @@ class Puntos_class():
         
         
         d['geom']=g
+        ##el ** desempaqueta el diccionario permitiendo que las claves sean nombres del parámetro y los valores en valores.
         b=Points_crit(**d)
         b.save()
+        #convertimos una instancia de modelo de django a diccionario
         d=model_to_dict(b)
         d['geom']=g.wkt
         d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
@@ -85,7 +88,9 @@ class Puntos_class():
 
 
     def selectAsDict(self, d:dict):
-    #create the geometry with geos
+    #filtrar por rango menor y mayor: Limit_politic.objects.filter(id__lt=3) o Limit_politic.objects.filter(id__gt=4)
+    #por area creo tambien: Limit_politic.objects.filter(area__lt=100) o Limit_politic.objects.filter(area__gt=100)
+
         f=Points_crit.objects.filter(id=d['id'])
         l=list(f)
         if len(l)<1:
@@ -99,6 +104,19 @@ class Puntos_class():
         return {'ok':True, 'Message': f"Retriewed Point: {len(l)}",
                 'data':[d]}
         
+    def selectallAsDicts(self):
+        l = Points_crit.objects.all()
+        data = []
+        writer = WKTWriter(precision=4)
+        
+        for b in l:
+            d = model_to_dict(b)
+            d['geom'] = writer.write(b.geom)
+            d['data_creation'] = d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
+                
+            data.append(d)
+            
+        return {'ok': True, 'Message': 'Data retrieved', 'data': data}
 
     def selectAsTuples(self, d:dict):
     #create the geometry with geos

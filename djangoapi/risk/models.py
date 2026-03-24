@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.gis.db import models as gis_models
 import django.utils.timezone as djangoTimezone
 
+##crear app
+#python manage.py startapp risk
+
+##migracion
+##python manage.py makemigrations
+##python manage.py migrate 
+
 # Create your models here.
 class Points_crit(models.Model):
 
