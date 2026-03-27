@@ -46,7 +46,7 @@ def run(*args):
         sys.exit(0)
 
     #diccionario para select y delete
-    dict_id = {"id": 1} 
+    dict_id = {"id": 5} 
 
     #diccionarios de datos
     datos_poligono = {
