@@ -51,13 +51,13 @@ def run(*args):
     #diccionarios de datos
     datos_poligono = {
         # FALLA 3: ST_Relate (Polígono que se come la mitad del distrito de "Amarilis" que cargaste antes)
-        "id": 98, "nombre": "Polígono Invasor",  "provincia": "Test", "poblacion": 0, 
+       "id": 98, "nombre": "Polígono Invasor",  "provincia": "Test", "poblacion": 0, 
         "geom": "POLYGON((-76.22 -9.93, -76.20 -9.93, -76.20 -9.91, -76.22 -9.91, -76.22 -9.93))"
-        # "id": 11,
-        # "nombre": "Ambo",
-        # "provincia": "Ambo",
-        # "poblacion": 15000,
-        # "geom": "POLYGON((-76.2000 -10.1500, -76.1500 -10.1500, -76.1500 -10.1000, -76.2000 -10.1000, -76.2000 -10.1500))"
+        # "id": 12,
+        # "nombre": "Región Huánuco",
+        # "provincia": "11 Provincias",
+        # "poblacion": 780000,
+        # "geom": "POLYGON (())"
     }
     datos_rio = {
         # FALLA 3: ST_Relate (Se cruza como una "X" cortando exactamente por la mitad al "Río Huallaga Tramo Ambo" que insertaste antes)
