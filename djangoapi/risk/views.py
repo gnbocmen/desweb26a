@@ -2,12 +2,53 @@ from django.http import JsonResponse
 from django.views import View
 
 #My imports
-from core.myLib.geometryTools import WkbConversor, GeometryChecks
-from buildings.models import Buildings, Owners, BuildingsOwners
-from buildings.serializers import BuildingsSerializer, OwnersSerializer, BuildingsOwnersSerializer
+# from core.myLib.geometryTools import WkbConversor, GeometryChecks
+# from buildings.models import Buildings, Owners, BuildingsOwners
+# from buildings.serializers import BuildingsSerializer, OwnersSerializer, BuildingsOwnersSerializer
 from djangoapi.settings import EPSG_FOR_GEOMETRIES, ST_SNAP_PRECISION, MAX_NUMBER_OF_RETRIEVED_ROWS
 from core.myLib.baseDjangoView import BaseDjangoView
 
+
+#Funciones
+from risk.operations.limit_polit.poligon_django import limite_politic_class
+
+
+class Polig_view(BaseDjangoView):
+    #GET OPERATIONS
+    def selectone(self, id):
+        operaciones=limite_politic_class()
+        r = operaciones.selectAsDict({'id': id})
+        
+        return JsonResponse(r)
+
+    def selectall(self):
+        operaciones = limite_politic_class()
+        # Llamar al método selectall de tu clase
+        r = operaciones.selectall()
+        return JsonResponse(r)
+
+    #POST OPERATIONS
+    def insert(self, request):
+        d = request.POST.dict()
+        # 2. Instanciar y ejecutar
+        operaciones = limite_politic_class()
+        r = operaciones.insert(d)
+        return JsonResponse(r)
+        
+    def update(self, request, id):
+        d = request.POST.dict()
+        # Se agrega el id de la URL al diccionario 
+        d['id'] = id 
+        
+        operaciones = limite_politic_class()
+        r = operaciones.update(d)
+        return JsonResponse(r)
+    
+    def delete(self, id):
+        d = {'id': id}
+        operaciones = limite_politic_class()
+        r = operaciones.delete(d)
+        return JsonResponse(r)
 
 #my code
 #from risk.operations.classeee import funcion_insert_etc
@@ -33,8 +74,33 @@ class HelloRisk(View):
         
         return JsonResponse({"ok":True,"message": "Core. Hello world. Method: POST", "data":[request.POST.dict()]},status=200)
 
-class Risk(View):
-    def post(self, request):
-        d=request.POST.dict()
+
+# class PuntosView(BaseDjangoView):
+#     def insert(self, request):
+#         d = request.POST.dict()      # 1. Sacas el diccionario de internet
+#         clase_puntos = PuntosClass() # 2. Llamas a tu clase trabajadora
+#         r = clase_puntos.insert(d)   # 3. Le pasas el diccionario
+#         return JsonResponse(r)       # 4. Devuelves el resultado a Postman
+
+#     def selectall(self):
+#         clase_puntos = PuntosClass()
+#         r = clase_puntos.selectallAsDicts() 
+#         return JsonResponse(r)
         
-        return JsonResponse({"ok":True,"message": "Datos Recibidos", "data":[request.POST.dict()]},status=200)
+    # (Y así harías con update, delete, y selectone)
+
+# class RiosView(BaseDjangoView):
+#     # Harías exactamente lo mismo, pero llamando a RiosClass()
+#     ...
+
+# class LimitesView(BaseDjangoView):
+#     # Harías exactamente lo mismo, pero llamando a LimitesClass()
+#     ...
+
+    
+
+# class Risk(View):
+#     def post(self, request):
+#         d=request.POST.dict()
+        
+#         return JsonResponse({"ok":True,"message": "Datos Recibidos", "data":[request.POST.dict()]},status=200)

@@ -7,7 +7,8 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path("hello_risk/", views.HelloRisk.as_view(),name="hello_risk"),
-    path("risk/", views.Risk.as_view(),name="risk")
+    path("poligono/<str:action>/", views.Polig_view.as_view(),name="Limite_politico"),
+    path("poligono/<str:action>/<int:id>/", views.Polig_view.as_view(), name="limite_con_id")
    # path('', include(router.urls)),
     #path('not_loggedin/', views.notLoggedIn, name="not_loggedin"),
     #path('login/', views.LoginView.as_view(),name="core_login"),
