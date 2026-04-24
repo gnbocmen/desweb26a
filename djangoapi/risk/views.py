@@ -11,7 +11,85 @@ from core.myLib.baseDjangoView import BaseDjangoView
 
 #Funciones
 from risk.operations.limit_polit.poligon_django import limite_politic_class
+from risk.operations.rivers.lines_django import Rivers_class
+from risk.operations.points_crit.pc_django import Puntos_class
 
+
+
+class Point_view(BaseDjangoView):
+    #GET OPERATIONS
+    def selectone(self, id):
+        operaciones=Puntos_class()
+        r = operaciones.selectAsDict({'id': id})
+        
+        return JsonResponse(r)
+
+    def selectall(self):
+        operaciones = Puntos_class()
+        # Llamar al método selectall de tu clase
+        r = operaciones.selectall()
+        return JsonResponse(r)
+
+    #POST OPERATIONS
+    def insert(self, request):
+        d = request.POST.dict()
+        # 2. Instanciar y ejecutar
+        operaciones = Puntos_class()
+        r = operaciones.insert(d)
+        return JsonResponse(r)
+        
+    def update(self, request, id):
+        d = request.POST.dict()
+        # Se agrega el id de la URL al diccionario 
+        d['id'] = id 
+        
+        operaciones = Puntos_class()
+        r = operaciones.update(d)
+        return JsonResponse(r)
+    
+    def delete(self, id):
+        d = {'id': id}
+        operaciones = Puntos_class()
+        r = operaciones.delete(d)
+        return JsonResponse(r)
+
+
+class River_view(BaseDjangoView):
+    #GET OPERATIONS
+    def selectone(self, id):
+        operaciones=Rivers_class()
+        r = operaciones.selectAsDict({'id': id})
+        
+        return JsonResponse(r)
+
+    def selectall(self):
+        operaciones = Rivers_class()
+        # Llamar al método selectall de tu clase
+        r = operaciones.selectall()
+        return JsonResponse(r)
+
+    #POST OPERATIONS
+    def insert(self, request):
+        d = request.POST.dict()
+        # 2. Instanciar y ejecutar
+        operaciones = Rivers_class()
+        r = operaciones.insert(d)
+        return JsonResponse(r)
+        
+    def update(self, request, id):
+        d = request.POST.dict()
+        # Se agrega el id de la URL al diccionario 
+        d['id'] = id 
+        
+        operaciones = Rivers_class()
+        r = operaciones.update(d)
+        return JsonResponse(r)
+    
+    def delete(self, id):
+        d = {'id': id}
+        operaciones = Rivers_class()
+        r = operaciones.delete(d)
+        return JsonResponse(r)
 
 class Polig_view(BaseDjangoView):
     #GET OPERATIONS
