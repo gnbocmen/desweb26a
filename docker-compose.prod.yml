@@ -75,23 +75,25 @@ services:
     volumes:
       - ./djangoapi:/usr/src/app
     ports:
-      - 127.0.0.1:${GISSERVER_DOCKER_DJANGO_API_FORWARDED_PORT}:8000
+      - 127.0.0.1:${GEOMATICAUPV_DOCKER_DJANGO_API_FORWARDED_PORT}:8000
     env_file:
       - .env.prod
     networks:
-      - postgis
+      - joamona-dj-api_postgis
 
     #to ckeck if postgres is already ready. This service
     #will not start up to the posgis service is ready
-    depends_on:
-      postgis:
-        condition: service_healthy
+    # depends_on:
+    #   postgis:
+    #     condition: service_healthy
 networks:
-   postgis:
+   joamona-dj-api_postgis:
       driver: bridge
+      external: true
 #coment
 volumes:
   postgis-data:
     driver: local
+    
 
 #comentario

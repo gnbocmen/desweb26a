@@ -103,7 +103,7 @@ class Puntos_class():
 
 
     def selectall(self):
-        l = Puntos_class.objects.all()
+        l = Points_crit.objects.all()
         data = []
         writer = WKTWriter(precision=4)
         if len(l)==0:
