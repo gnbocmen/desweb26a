@@ -41,6 +41,10 @@ class Puntos_class():
         if region and not g_db.within(region.geom):
             return {'ok': False, 'message': f'The point is not inside the region Huánuco (id=1). Coords: {g_db.wkt}', 'data': None}
 
+        # Verifica si ya existe una geometría exactamente igual en la base de datos
+        if Points_crit.objects.filter(geom__equals=g_db).exists():
+            return {'ok': False, 'message': 'Error: Ya existe un punto registrado en estas coordenadas exactas.', 'data': None}
+        
         # 6. Guardado
         d['geom'] = g_db
         b = Points_crit(**d)
@@ -50,7 +54,7 @@ class Puntos_class():
         d=model_to_dict(b)
         d['geom']=g_db.wkt
         d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
-        return {'ok': True, 'message':'Polígono inserted', 'data': [d]}
+        return {'ok': True, 'message':'Point inserted', 'data': [d]}
 
 
     def update(self, d:dict):
@@ -86,7 +90,11 @@ class Puntos_class():
         b = Points_crit.objects.filter(id=d['id']).first()
         if not b:
             return {'ok': False, "message": f"No Point was found with id {d['id']}", 'data': None}
+        
+        if Points_crit.objects.filter(geom__equals=g_db).exclude(id=d['id']).exists():
+            return {'ok': False, 'message': 'Error: Ya existe OTRO punto registrado en estas coordenadas exactas.', 'data': None}
 
+        # 6. Actualización
         
         d['geom'] = g_db
 
@@ -115,7 +123,7 @@ class Puntos_class():
                 
             data.append(d)
             
-        return {'ok': True, 'Message': f"Retrieved poligons: {len(l)}", 'data': data}
+        return {'ok': True, 'Message': f"Retrieved Points: {len(l)}", 'data': data}
     
     def selectAsDict(self, d:dict):
     #filtrar por rango menor y mayor: Limit_politic.objects.filter(id__lt=3) o Limit_politic.objects.filter(id__gt=4)
@@ -131,7 +139,7 @@ class Puntos_class():
         d=model_to_dict(b)
         d['geom']=writer.write(b.geom).decode('utf-8')
         d['data_creation']=d['data_creation'].strftime("%Y-%m-%d %H:%M:%S")
-        return {'ok':True, 'Message': f"Retriewed Point: {len(l)}",
+        return {'ok':True, 'Message': f"Retrieved Point: {len(l)}",
                 'data':[d]}
         
    

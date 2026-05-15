@@ -73,7 +73,7 @@ class limite_politic_class():
             r=cur.fetchall()
 
             if len(r)>0:
-                return {'ok': False, 'message':'The geometry interior intersects with the following geometries id', 'data': r}
+                return {'ok': False, 'message':f'The geometry interior intersects with the following geometries id: {r}', 'data': r}
 
         # 6. Calculo de area y perimetro
         d['geom'] = g_db
@@ -153,7 +153,7 @@ class limite_politic_class():
             r=cur.fetchall()
 
             if len(r)>0:
-                return {'ok': False, 'message':'The geometry interior intersects with the following geometries id', 'data': r}
+                return {'ok': False, 'message':f'The geometry interior intersects with the following geometries id: {r}', 'data': r}
 
         #create the geometry with geos
         f=Limit_politic.objects.filter(id=d['id'])

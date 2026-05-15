@@ -70,7 +70,7 @@ class Rivers_class():
             r=cur.fetchall()
 
             if len(r)>0:
-                return {'ok': False, 'message':'The River intersects with the following rivers id', 'data': r}
+                return {'ok': False, 'message':f'The River intersects with the following rivers id: {r}', 'data': r}
 
 
 
@@ -147,7 +147,7 @@ class Rivers_class():
         r = cur.fetchall()
 
         if len(r) > 0:
-            return {'ok': False, 'message': 'The river intersects with others rivers id', 'data': r}
+            return {'ok': False, 'message': f'The river intersects with others rivers id: {r}', 'data': r}
 
         # 5. Búsqueda y Actualización
         b = Rivers.objects.filter(id=d['id']).first()
