@@ -7,7 +7,7 @@ from django.views import View
 # from buildings.serializers import BuildingsSerializer, OwnersSerializer, BuildingsOwnersSerializer
 from djangoapi.settings import EPSG_FOR_GEOMETRIES, ST_SNAP_PRECISION, MAX_NUMBER_OF_RETRIEVED_ROWS
 from core.myLib.baseDjangoView import BaseDjangoView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 #Funciones
 from risk.operations.limit_polit.poligon_django import limite_politic_class
@@ -16,7 +16,7 @@ from risk.operations.points_crit.pc_django import Puntos_class
 
 
 
-class Point_view(BaseDjangoView):
+class Point_view(LoginRequiredMixin, BaseDjangoView):
     #GET OPERATIONS
     def selectone(self, id):
         operaciones=Puntos_class()
@@ -54,7 +54,7 @@ class Point_view(BaseDjangoView):
         return JsonResponse(r)
 
 
-class River_view(BaseDjangoView):
+class River_view(LoginRequiredMixin, BaseDjangoView):
     #GET OPERATIONS
     def selectone(self, id):
         operaciones=Rivers_class()
@@ -91,7 +91,7 @@ class River_view(BaseDjangoView):
         r = operaciones.delete(d)
         return JsonResponse(r)
 
-class Polig_view(BaseDjangoView):
+class Polig_view(LoginRequiredMixin, BaseDjangoView):
     #GET OPERATIONS
     def selectone(self, id):
         operaciones=limite_politic_class()
